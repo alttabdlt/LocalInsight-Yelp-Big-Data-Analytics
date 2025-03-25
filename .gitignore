@@ -49,7 +49,8 @@ Yelp JSON/
 # Hadoop data storage
 hadoop_data/
 temp_data/
-data_for_viz/
+# Allow visualization data directory for Streamlit Cloud deployment
+# data_for_viz/
 
 # Temporary data files
 *.tmp

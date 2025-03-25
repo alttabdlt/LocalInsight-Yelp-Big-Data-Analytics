@@ -27,14 +27,16 @@ def load_spark_data():
     print("Starting Spark session to read HDFS data...")
     spark = SparkSession.builder \
         .appName("YelpVisualization") \
+        .config("spark.hadoop.fs.defaultFS", "hdfs://localhost:9000") \
+        .config("spark.hadoop.fs.hdfs.impl", "org.apache.hadoop.hdfs.DistributedFileSystem") \
         .getOrCreate()
     
     data = {}
     hdfs_paths = {
-        'business': 'hdfs:///user/localinsight/processed/business_analysis',
-        'geographic': 'hdfs:///user/localinsight/processed/geographic',
-        'temporal': 'hdfs:///user/localinsight/processed/temporal',
-        'model': 'hdfs:///user/localinsight/processed/model_data'
+        'business': 'hdfs://localhost:9000/user/localinsight/processed/business_analysis',
+        'geographic': 'hdfs://localhost:9000/user/localinsight/processed/geographic',
+        'temporal': 'hdfs://localhost:9000/user/localinsight/processed/temporal',
+        'model': 'hdfs://localhost:9000/user/localinsight/processed/model_data'
     }
     
     # Load data from HDFS
@@ -61,7 +63,7 @@ def load_spark_data():
     
     # Load geojson if available
     try:
-        geojson_path = 'hdfs:///user/localinsight/processed/geojson'
+        geojson_path = 'hdfs://localhost:9000/user/localinsight/processed/geojson'
         if spark._jvm.org.apache.hadoop.fs.FileSystem.get(spark._jsc.hadoopConfiguration()).exists(
             spark._jvm.org.apache.hadoop.fs.Path(geojson_path)):
             

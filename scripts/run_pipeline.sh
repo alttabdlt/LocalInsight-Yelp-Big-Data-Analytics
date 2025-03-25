@@ -14,6 +14,11 @@ PROJECT_ROOT="$(dirname "$SCRIPTS_DIR")"
 JAR_DIR="${PROJECT_ROOT}/target"
 LIB_DIR="${PROJECT_ROOT}/lib"
 
+# Allow configuration of HDFS paths
+HDFS_BASE_DIR=${HDFS_BASE_DIR:-"/user/localinsight"}
+HDFS_RAW_DIR="${HDFS_BASE_DIR}/raw"
+HDFS_PROCESSED_DIR="${HDFS_BASE_DIR}/processed"
+
 # Check if directories exist
 mkdir -p "${PROJECT_ROOT}/logs"
 mkdir -p "${JAR_DIR}"
@@ -50,33 +55,33 @@ jar -cf "${JAR_DIR}/yelp-analysis-with-dependencies.jar" .
 # Clean up existing output directories
 echo "Cleaning up existing output directories..."
 echo "----------------------------------------"
-hadoop fs -rm -r -f /user/localinsight/processed/business_processed
-hadoop fs -rm -r -f /user/localinsight/processed/review_sentiment
-hadoop fs -rm -r -f /user/localinsight/processed/temporal_patterns
-hadoop fs -rm -r -f /user/localinsight/processed/business_analysis
+hadoop fs -rm -r -f ${HDFS_PROCESSED_DIR}/business_processed
+hadoop fs -rm -r -f ${HDFS_PROCESSED_DIR}/review_sentiment
+hadoop fs -rm -r -f ${HDFS_PROCESSED_DIR}/temporal_patterns
+hadoop fs -rm -r -f ${HDFS_PROCESSED_DIR}/business_analysis
 
 echo "Step 3: Running Business Processing MapReduce job..."
 echo "----------------------------------------"
 # Include the JSON library in the classpath for Hadoop (using the correct syntax)
 hadoop jar "${JAR_DIR}/yelp-analysis-with-dependencies.jar" localinsight.mapreduce.BusinessProcessing \
-  /user/localinsight/raw/business/yelp_academic_dataset_business.json \
-  /user/localinsight/processed/business_processed
+  ${HDFS_RAW_DIR}/business/business.json \
+  ${HDFS_PROCESSED_DIR}/business_processed
 
 echo "Step 4: Running Review Sentiment MapReduce job..."
 echo "----------------------------------------"
 hadoop jar "${JAR_DIR}/yelp-analysis-with-dependencies.jar" localinsight.mapreduce.ReviewSentiment \
-  /user/localinsight/raw/reviews/yelp_academic_dataset_review.json \
-  /user/localinsight/processed/review_sentiment
+  ${HDFS_RAW_DIR}/reviews/review.json \
+  ${HDFS_PROCESSED_DIR}/review_sentiment
 
 echo "Step 5: Running Temporal Patterns MapReduce job..."
 echo "----------------------------------------"
 hadoop jar "${JAR_DIR}/yelp-analysis-with-dependencies.jar" localinsight.mapreduce.TemporalPatterns \
-  /user/localinsight/raw/checkin/yelp_academic_dataset_checkin.json \
-  /user/localinsight/processed/temporal_patterns
+  ${HDFS_RAW_DIR}/checkin/checkin.json \
+  ${HDFS_PROCESSED_DIR}/temporal_patterns
 
 # Activate virtual environment for Python packages
 echo "Activating Python virtual environment..."
-source "${PROJECT_ROOT}/venv/bin/activate"
+source "${PROJECT_ROOT}/new_venv/bin/activate"
 
 echo "Step 6: Running Spark Business Analysis..."
 echo "----------------------------------------"
@@ -113,6 +118,8 @@ rm -rf "${PROJECT_ROOT}/visualization_output"
 mkdir -p "${PROJECT_ROOT}/visualization_output"
 spark-submit --master local[*] \
   --jars "${JAR_DIR}/libs/json-20231013.jar" \
+  --conf "spark.hadoop.fs.defaultFS=hdfs://localhost:9000" \
+  --conf "spark.hadoop.fs.hdfs.impl=org.apache.hadoop.hdfs.DistributedFileSystem" \
   "${PROJECT_ROOT}/src/main/python/visualization/spark_visualizations.py" \
   > "${PROJECT_ROOT}/logs/visualization.log" 2>&1
 

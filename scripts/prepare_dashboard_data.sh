@@ -10,6 +10,10 @@ set -e
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 PROJECT_ROOT=$(dirname "$SCRIPT_DIR")
 
+# Allow configuration of HDFS paths
+HDFS_BASE_DIR=${HDFS_BASE_DIR:-"/user/localinsight"}
+HDFS_PROCESSED_DIR="${HDFS_BASE_DIR}/processed"
+
 # Create data directory for visualizations
 DATA_DIR="${PROJECT_ROOT}/src/main/python/visualization/data_for_viz"
 # Clear existing data directory to ensure clean results
@@ -18,11 +22,11 @@ mkdir -p "$DATA_DIR"
 
 echo "Creating data directory for dashboard: $DATA_DIR"
 
-# Updated HDFS paths to extract (based on actual filesystem structure)
-BUSINESS_ANALYSIS_PATH="/user/localinsight/processed/business_analysis"
-GEOGRAPHIC_ANALYSIS_PATH="/user/localinsight/processed/geographic"
-TEMPORAL_ANALYSIS_PATH="/user/localinsight/processed/temporal"
-PREDICTIVE_MODEL_PATH="/user/localinsight/processed/model_data"
+# Updated HDFS paths with configurable base directory
+BUSINESS_ANALYSIS_PATH="${HDFS_PROCESSED_DIR}/business_analysis"
+GEOGRAPHIC_ANALYSIS_PATH="${HDFS_PROCESSED_DIR}/geographic"
+TEMPORAL_ANALYSIS_PATH="${HDFS_PROCESSED_DIR}/temporal"
+PREDICTIVE_MODEL_PATH="${HDFS_PROCESSED_DIR}/model_data"
 
 # Extract business analysis data
 echo "Extracting business analysis data..."

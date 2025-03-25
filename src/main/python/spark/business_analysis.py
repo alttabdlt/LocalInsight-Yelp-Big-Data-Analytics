@@ -22,10 +22,10 @@ def main():
         .getOrCreate()
     
     # Load business data
-    business_df = spark.read.json("hdfs:///user/localinsight/raw/business/yelp_academic_dataset_business.json")
+    business_df = spark.read.json("hdfs://localhost:9000/user/localinsight/raw/business/business.json")
     
     # Load review data
-    reviews_df = spark.read.json("hdfs:///user/localinsight/raw/reviews/yelp_academic_dataset_review.json")
+    reviews_df = spark.read.json("hdfs://localhost:9000/user/localinsight/raw/reviews/review.json")
     
     # Print schemas to understand the data
     print("Business Schema:")
@@ -57,7 +57,7 @@ def main():
     classification_model(analysis_df)
     
     # Save processed data for later use
-    analysis_df.write.mode("overwrite").json("hdfs:///user/localinsight/processed/business_analysis")
+    analysis_df.write.mode("overwrite").json("hdfs://localhost:9000/user/localinsight/processed/business_analysis")
     
     # Stop Spark session
     spark.stop()

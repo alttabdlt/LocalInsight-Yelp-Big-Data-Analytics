@@ -22,13 +22,13 @@ def main():
         .getOrCreate()
     
     # Load business data
-    business_df = spark.read.json("hdfs:///user/localinsight/raw/business/yelp_academic_dataset_business.json")
+    business_df = spark.read.json("hdfs://localhost:9000/user/localinsight/raw/business/business.json")
     
     # Load review data
-    reviews_df = spark.read.json("hdfs:///user/localinsight/raw/reviews/yelp_academic_dataset_review.json")
+    reviews_df = spark.read.json("hdfs://localhost:9000/user/localinsight/raw/reviews/review.json")
     
     # Load check-in data
-    checkin_df = spark.read.json("hdfs:///user/localinsight/raw/checkin/yelp_academic_dataset_checkin.json")
+    checkin_df = spark.read.json("hdfs://localhost:9000/user/localinsight/raw/checkin/checkin.json")
     
     # Add timestamp columns to review data
     reviews_with_time = reviews_df.withColumn(
@@ -90,7 +90,7 @@ def main():
     review_velocity = calculate_review_velocity(reviews_with_time, spark)
     
     # Save processed data
-    review_velocity.write.mode("overwrite").json("hdfs:///user/localinsight/processed/temporal")
+    review_velocity.write.mode("overwrite").json("hdfs://localhost:9000/user/localinsight/processed/temporal")
     
     # Stop Spark session
     spark.stop()

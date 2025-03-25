@@ -19,14 +19,14 @@ def main():
         .getOrCreate()
     
     # Load business data
-    business_df = spark.read.json("hdfs:///user/localinsight/raw/business/yelp_academic_dataset_business.json")
+    business_df = spark.read.json("hdfs://localhost:9000/user/localinsight/raw/business/business.json")
     
     # Load processed review data (from previous jobs)
     try:
-        reviews_df = spark.read.json("hdfs:///user/localinsight/processed/reviews")
+        reviews_df = spark.read.json("hdfs://localhost:9000/user/localinsight/processed/reviews")
     except:
         # If processed reviews don't exist, load the raw reviews
-        reviews_df = spark.read.json("hdfs:///user/localinsight/raw/reviews/yelp_academic_dataset_review.json")
+        reviews_df = spark.read.json("hdfs://localhost:9000/user/localinsight/raw/reviews/review.json")
         # Aggregate reviews by business
         reviews_df = reviews_df.groupBy("business_id").agg(
             {"stars": "avg", "useful": "avg"}
@@ -108,12 +108,12 @@ def main():
         
         # Save to HDFS as well
         spark.createDataFrame([{"geojson": json.dumps(geojson_output)}]) \
-            .write.mode("overwrite").json("hdfs:///user/localinsight/processed/geojson")
+            .write.mode("overwrite").json("hdfs://localhost:9000/user/localinsight/processed/geojson")
     except Exception as e:
         print(f"Error saving GeoJSON: {e}")
     
     # Save processed data
-    geo_analysis_df.write.mode("overwrite").json("hdfs:///user/localinsight/processed/geographic")
+    geo_analysis_df.write.mode("overwrite").json("hdfs://localhost:9000/user/localinsight/processed/geographic")
     
     # Stop Spark session
     spark.stop()

@@ -1,8 +1,23 @@
 # LocalInsight: Big Data Analytics for Business Success Factors
 
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://localinsight-yelp-analytics.streamlit.app)
+
 ## Project Overview
 
 LocalInsight is a comprehensive big data analytics system that leverages the Yelp dataset to identify key factors influencing business success in the service industry. By processing millions of reviews, business attributes, and user data using Hadoop and Spark, this project delivers valuable insights and predictive models for entrepreneurs and business owners.
+
+## Live Dashboard
+
+We've deployed a live version of our dashboard with pre-processed data from the Yelp dataset. This allows you to explore the insights without having to run the full data pipeline:
+* **Live Demo**: [LocalInsight Dashboard](https://localinsight-yelp-analytics.streamlit.app)
+* **Features Available**:
+  * Interactive maps showing business distribution and success rates
+  * Key success factors with correlation analysis
+  * Temporal patterns of business performance
+  * Predictive model results with 81% accuracy
+  * Feature importance visualization
+
+Note: The live dashboard uses a processed subset of the data. For full analysis capabilities with the complete dataset, follow the installation and setup instructions below.
 
 ## Features
 
@@ -30,59 +45,155 @@ LocalInsight is a comprehensive big data analytics system that leverages the Yel
 [Interactive Streamlit Dashboard]
 ```
 
+## Dataset Setup
+
+This project uses the Yelp Academic Dataset, which is approximately 8GB in size. Due to license restrictions, the dataset is not included in this repository. Follow these steps to set up the dataset:
+
+1. **Download the Dataset**:
+   - Go to [https://www.yelp.com/dataset](https://www.yelp.com/dataset)
+   - Download the JSON files directly (approximately 8GB compressed)
+   - No request form needs to be filled out, the files can be downloaded directly
+
+2. **Extract the Dataset**:
+   ```bash
+   # Create directory for the dataset
+   mkdir -p "Yelp JSON/yelp_dataset"
+   
+   # Extract the archive to the directory
+   tar -xzf yelp_dataset.tar.gz -C "Yelp JSON/yelp_dataset"
+   ```
+
+3. **Verify the Dataset**:
+   The extraction should result in the following files:
+   - `yelp_academic_dataset_business.json` (~ 113 MB)
+   - `yelp_academic_dataset_review.json` (~ 5.0 GB)
+   - `yelp_academic_dataset_user.json` (~ 3.1 GB)
+   - `yelp_academic_dataset_checkin.json` (~ 141 MB)
+   - `yelp_academic_dataset_tip.json` (~ 209 MB)
+
+4. **Alternative: Using Sample Data**:
+   If you want to test the pipeline without downloading the full dataset:
+   ```bash
+   # Generate sample data for testing
+   ./scripts/create_sample_dashboard_data.sh
+   ```
+   This will create small sample JSON files that allow you to test the dashboard functionality.
+
+## Environment Setup
+
+Before running the project, make sure you have the following prerequisites installed:
+
+1. **Hadoop Setup**:
+   - Hadoop 3.x should be installed and configured on your system
+   - HDFS should be running and accessible at `localhost:9000` (this is the default)
+   - If you're using a different HDFS configuration, update the URIs in:
+     - `scripts/hdfs_upload.sh`
+     - `src/main/python/spark/*.py` files
+     - `scripts/run_pipeline.sh`
+
+2. **Spark Setup**:
+   - Spark 3.x should be installed and configured
+   - The `SPARK_HOME` environment variable should be set
+
+3. **Python Environment**:
+   - The project includes a script to set up a Python virtual environment:
+   ```bash
+   ./scripts/setup_env.sh
+   source new_venv/bin/activate
+   ```
+
+4. **HDFS Directory Structure**:
+   - The project automatically creates the required HDFS directory structure
+   - Make sure your Hadoop user has write permissions to HDFS
+
 ## Quick Start Guide
 
-### Prerequisites
+### One-Step Execution (after Hadoop is running)
 
-- Java 8+
-- Python 3.8+
-- Hadoop 3.x
-- Spark 3.x
-- Streamlit
+1. **Start Hadoop** (if not already running):
+   ```bash
+   start-dfs.sh
+   start-yarn.sh
+   ```
 
-### One-Step Execution
+2. **Run the automated setup and pipeline**:
+   ```bash
+   ./scripts/setup_env.sh  # Creates Python virtual environment with dependencies
+   ./scripts/run_pipeline.sh  # Runs the full data pipeline
+   ```
 
-The entire pipeline can be run with a single command:
-
-```bash
-./run_all.sh
-```
-
-This script:
-1. Verifies and starts Hadoop if needed
-2. Runs the complete data pipeline (MapReduce and Spark jobs)
-3. Prepares the data for visualization
-4. Launches the interactive Streamlit dashboard
+3. **View Results**:
+   - Logs are available in `logs/`
+   - Visualizations are generated in `visualization_output/`
 
 ### Step-by-Step Guide
 
 If you prefer to run components individually:
 
-1. **Setup Environment**:
+1. **Start Hadoop** (if not already running):
    ```bash
-   ./scripts/setup_env.sh
-   source venv/bin/activate
+   start-dfs.sh
+   start-yarn.sh
    ```
 
-2. **Run the MapReduce and Spark Pipeline**:
+2. **Setup Environment**:
+   ```bash
+   ./scripts/setup_env.sh
+   source new_venv/bin/activate
+   ```
+
+3. **Upload Data to HDFS**:
+   - Place your Yelp dataset files in a local directory
+   - Run the upload script:
+   ```bash
+   ./scripts/hdfs_upload.sh /path/to/your/yelp_dataset
+   ```
+   - This will upload the JSON files to HDFS with the correct filenames
+   - Note: The script renames files from `yelp_academic_dataset_*.json` to just `*.json`
+
+4. **Run the MapReduce and Spark Pipeline**:
    ```bash
    ./scripts/run_pipeline.sh
    ```
+   - This handles all MapReduce jobs, Spark analysis, and visualization generation
+   - The pipeline is configured to work with HDFS at `localhost:9000` by default
 
-3. **Extract Data for Dashboard**:
-   ```bash
-   ./scripts/prepare_dashboard_data.sh
-   ```
+5. **Check Output and Logs**:
+   - All logs will be available in the `logs/` directory
+   - Visualizations will be generated in `visualization_output/`
 
-4. **Transform Model Data**:
-   ```bash
-   python3 ./scripts/transform_model_data.py
-   ```
+## Troubleshooting
 
-5. **Launch Dashboard**:
-   ```bash
-   streamlit run ./src/main/python/visualization/business_dashboard.py
-   ```
+### Common Issues
+
+1. **HDFS Connection Issues**:
+   - Ensure Hadoop is running: `jps` should show NameNode and DataNode processes
+   - Verify HDFS is accessible at localhost:9000: `hdfs dfs -ls hdfs://localhost:9000/`
+   - If using a different hostname or port, update the URIs in all Spark scripts
+
+2. **Python Dependencies**:
+   - If encountering module errors, ensure you've activated the virtual environment:
+     ```bash
+     source new_venv/bin/activate
+     ```
+
+3. **Visualization Issues**:
+   - If visualizations aren't generating, check the `logs/visualization.log`
+   - Ensure the Spark configuration allows access to HDFS
+
+### Advanced Configuration
+
+The project is configured to work out-of-the-box with standard Hadoop and Spark installations. If you need to customize:
+
+1. **Custom HDFS URI**: 
+   If your HDFS is not running at the default `localhost:9000`:
+   - Update URIs in all Spark scripts in `src/main/python/spark/`
+   - Update the `hdfs_upload.sh` script
+   - Update the Spark configuration in `run_pipeline.sh`
+
+2. **Memory Configuration**:
+   For larger datasets or limited resources:
+   - Adjust Spark executor memory in `run_pipeline.sh` by adding `--executor-memory 4g`
 
 ## Project Structure
 
@@ -113,40 +224,6 @@ Big-Data-Project/
 └── README.md                 # This file
 ```
 
-## Dataset Setup
-
-This project uses the Yelp Academic Dataset, which is approximately 8GB in size. Due to license restrictions, the dataset is not included in this repository. Follow these steps to set up the dataset:
-
-1. **Download the Dataset**:
-   - Go to [https://www.yelp.com/dataset](https://www.yelp.com/dataset)
-   - Complete the request form and accept the terms of service
-   - Download the dataset (approximately 8GB compressed)
-
-2. **Extract the Dataset**:
-   ```bash
-   # Create directory for the dataset
-   mkdir -p "Yelp JSON/yelp_dataset"
-   
-   # Extract the archive to the directory
-   tar -xzf yelp_dataset.tar.gz -C "Yelp JSON/yelp_dataset"
-   ```
-
-3. **Verify the Dataset**:
-   The extraction should result in the following files:
-   - `yelp_academic_dataset_business.json` (~ 113 MB)
-   - `yelp_academic_dataset_review.json` (~ 5.0 GB)
-   - `yelp_academic_dataset_user.json` (~ 3.1 GB)
-   - `yelp_academic_dataset_checkin.json` (~ 141 MB)
-   - `yelp_academic_dataset_tip.json` (~ 209 MB)
-
-4. **Alternative: Using Sample Data**:
-   If you want to test the pipeline without downloading the full dataset:
-   ```bash
-   # Generate sample data for testing
-   ./scripts/create_sample_dashboard_data.sh
-   ```
-   This will create small sample JSON files that allow you to test the dashboard functionality.
-
 ## Key Components
 
 ### 1. Data Pipeline (`scripts/run_pipeline.sh`)
@@ -173,34 +250,6 @@ Built with Streamlit, the dashboard presents:
 - Business success factor analysis with correlation visualizations
 - Temporal patterns showing business performance over time
 - Predictive model results with feature importance charts
-
-## Troubleshooting
-
-### Common Issues
-
-1. **Hadoop Not Running**:
-   ```bash
-   start-dfs.sh
-   start-yarn.sh
-   ```
-
-2. **Package Dependency Issues**:
-   ```bash
-   source venv/bin/activate
-   pip install -r requirements.txt
-   ```
-
-3. **Permission Issues with HDFS**:
-   ```bash
-   hadoop fs -chmod -R 777 /user/localinsight
-   ```
-
-4. **Data Not Loading in Dashboard**:
-   Ensure the data preparation and transformation scripts have run:
-   ```bash
-   ./scripts/prepare_dashboard_data.sh
-   python3 ./scripts/transform_model_data.py
-   ```
 
 ## Performance Considerations
 

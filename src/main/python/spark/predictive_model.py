@@ -28,9 +28,9 @@ def main():
     
     try:
         # Try loading previously processed data
-        business_analysis_df = spark.read.json("hdfs:///user/localinsight/processed/business_analysis")
-        geo_df = spark.read.json("hdfs:///user/localinsight/processed/geographic")
-        temporal_df = spark.read.json("hdfs:///user/localinsight/processed/temporal")
+        business_analysis_df = spark.read.json("hdfs://localhost:9000/user/localinsight/processed/business_analysis")
+        geo_df = spark.read.json("hdfs://localhost:9000/user/localinsight/processed/geographic")
+        temporal_df = spark.read.json("hdfs://localhost:9000/user/localinsight/processed/temporal")
         
         print("Successfully loaded processed data")
     except Exception as e:
@@ -38,8 +38,8 @@ def main():
         print("Loading raw data instead...")
         
         # If processed data is not available, load and process raw data
-        business_df = spark.read.json("hdfs:///user/localinsight/raw/business/yelp_academic_dataset_business.json")
-        reviews_df = spark.read.json("hdfs:///user/localinsight/raw/reviews/yelp_academic_dataset_review.json")
+        business_df = spark.read.json("hdfs://localhost:9000/user/localinsight/raw/business/business.json")
+        reviews_df = spark.read.json("hdfs://localhost:9000/user/localinsight/raw/reviews/review.json")
         
         # Process business attributes
         business_analysis_df = process_business_data(business_df)
@@ -71,7 +71,7 @@ def main():
     build_longevity_model(train_data, test_data)
     
     # Save model data for visualization
-    model_df.write.mode("overwrite").json("hdfs:///user/localinsight/processed/model_data")
+    model_df.write.mode("overwrite").json("hdfs://localhost:9000/user/localinsight/processed/model_data")
     
     # Stop Spark session
     spark.stop()
@@ -235,7 +235,7 @@ def build_star_rating_model(train_data, test_data):
     
     # Save model
     try:
-        model_path = "hdfs:///user/localinsight/models/star_rating_model"
+        model_path = "hdfs://localhost:9000/user/localinsight/models/star_rating_model"
         model.write().overwrite().save(model_path)
         print(f"Model saved to {model_path}")
     except Exception as e:
@@ -304,7 +304,7 @@ def build_business_success_classifier(train_data, test_data):
     
     # Save model
     try:
-        model_path = "hdfs:///user/localinsight/models/success_classifier_model"
+        model_path = "hdfs://localhost:9000/user/localinsight/models/success_classifier_model"
         model.write().overwrite().save(model_path)
         print(f"Model saved to {model_path}")
     except Exception as e:
@@ -374,7 +374,7 @@ def build_longevity_model(train_data, test_data):
     
     # Save model
     try:
-        model_path = "hdfs:///user/localinsight/models/longevity_model"
+        model_path = "hdfs://localhost:9000/user/localinsight/models/longevity_model"
         model.write().overwrite().save(model_path)
         print(f"Model saved to {model_path}")
     except Exception as e:
