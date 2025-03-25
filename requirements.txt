@@ -1,7 +1,31 @@
+# LocalInsight Requirements
+
+# Core Data Processing
 pandas>=1.0.0
 numpy>=1.18.0
+scikit-learn>=1.0.0
+
+# Visualization
 matplotlib>=3.1.0
 seaborn>=0.10.0
 folium>=0.11.0
+plotly>=5.0.0
+
+# Dashboard
+streamlit>=1.0.0
+streamlit_folium>=0.7.0
+st-annotated-text>=3.0.0
+
+# Big Data
 pyspark>=3.0.0
+
+# JSON Processing
+json5>=0.9.6
+
+# Development and Notebooks
 jupyter>=1.0.0
+
+# Additional Visualization
+pyarrow>=7.0.0
+pillow>=9.0.0
+altair>=4.2.0
