@@ -1,0 +1,5 @@
+{"business_id":"b1","name":"Business 1","stars":4.5,"review_count":120,"is_open":1,"has_wifi":1,"price_level":2,"noise_level":1,"takes_reservations":1,"success":1}
+{"business_id":"b2","name":"Business 2","stars":3.8,"review_count":85,"is_open":1,"has_wifi":1,"price_level":1,"noise_level":2,"takes_reservations":0,"success":0}
+{"business_id":"b3","name":"Business 3","stars":4.2,"review_count":156,"is_open":1,"has_wifi":0,"price_level":3,"noise_level":2,"takes_reservations":1,"success":1}
+{"business_id":"b4","name":"Business 4","stars":2.7,"review_count":45,"is_open":0,"has_wifi":0,"price_level":1,"noise_level":3,"takes_reservations":0,"success":0}
+{"business_id":"b5","name":"Business 5","stars":4.7,"review_count":230,"is_open":1,"has_wifi":1,"price_level":4,"noise_level":1,"takes_reservations":1,"success":1}

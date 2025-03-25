@@ -1,0 +1,7 @@
+{"feature":"review_count","importance":0.35}
+{"feature":"price_level","importance":0.25}
+{"feature":"has_wifi","importance":0.15}
+{"feature":"noise_level","importance":0.10}
+{"feature":"takes_reservations","importance":0.08}
+{"feature":"years_with_data","importance":0.05}
+{"feature":"avg_growth_rate","importance":0.02}

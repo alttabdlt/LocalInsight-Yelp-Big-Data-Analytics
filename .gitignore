@@ -1,0 +1,65 @@
+# Compiled Java classes
+*.class
+
+# Package files
+*.jar
+*.war
+*.ear
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+logs/
+*.log
+
+# Visualization output
+visualization_output/
+
+# Target directory
+target/
+
+# HDFS temporary files
+.Trash-*/
+
+# Large Yelp Dataset Files (8GB+)
+Yelp JSON/
+*.json
+!src/main/python/visualization/data_for_viz/*.json
+!src/main/python/visualization/sample_data/*.json
+
+# Hadoop data storage
+hadoop_data/
+temp_data/
+data_for_viz/
+
+# Temporary data files
+*.tmp
+*.temp
+
+# OS specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
