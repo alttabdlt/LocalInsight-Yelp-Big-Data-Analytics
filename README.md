@@ -1,6 +1,6 @@
 # LocalInsight: Big Data Analytics for Business Success Factors
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://localinsight-yelp-analytics.streamlit.app)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://localinsight.streamlit.app/)
 
 ## Project Overview
 
@@ -9,7 +9,7 @@ LocalInsight is a comprehensive big data analytics system that leverages the Yel
 ## Live Dashboard
 
 We've deployed a live version of our dashboard with pre-processed data from the Yelp dataset. This allows you to explore the insights without having to run the full data pipeline:
-* **Live Demo**: [LocalInsight Dashboard](https://localinsight-yelp-analytics.streamlit.app)
+* **Live Demo**: [LocalInsight Dashboard](https://localinsight.streamlit.app/)
 * **Features Available**:
   * Interactive maps showing business distribution and success rates
   * Key success factors with correlation analysis
